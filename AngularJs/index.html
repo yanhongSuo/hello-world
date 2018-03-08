@@ -46,12 +46,11 @@
 var app = angular.module('myApp',[]);
 app.controller('userCtrl',function($scope){
 //	我的备忘录
-	$scope.todoList = JSON.parse( window.localStorage.getItem('STORAGE_KEY') || '[]' );
+	$scope.todoList = [{todoText:'clearHouse'}];
 
 	$scope.todoAdd = function(){
 		$scope.todoList.push({todoText:$scope.todoInput, down:false})
 		$scope.todoInput = '';
-		$scope.save(JSON.stringify($scope.todoList));
 	}
 	$scope.remove = function(){
 		var oldList = $scope.todoList;
