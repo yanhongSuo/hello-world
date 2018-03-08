@@ -2,22 +2,85 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<!--<script type="text/javascript" src="http://www.w3school.com.cn/jquery/jquery.js"></script>-->
 <meta charset="utf-8">
+<!--<link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css">-->
+<!--<script type="text/javascript" src="http://www.w3school.com.cn/jquery/jquery.js"></script>-->
+<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+<!--<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js"></script>-->
 </head>
-<body>
-<div ng-app="myApp" ng-controller="myCtrl">
-	名: <input type="text" ng-model="firstName"><br>
-    姓: <input type="text" ng-model="lastName"><br>
-    <br>
-    姓名: {{firstName + " " + lastName}}
+<body ng-app="myApp" ng-controller="userCtrl">
+<div class="container">
+	<h3>Users</h3>
+    <table class="table table-striped">
+      <thead><tr>
+        <th>Edit</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+      </tr></thead>
+      <tbody><tr ng-repeat="user in users">
+        <td>
+          <button class="btn" ng-click="editUser(user.id)">
+          <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+          </button>
+        </td>
+        <td>{{ user.fName }}</td>
+        <td>{{ user.lName }}</td>
+      </tr></tbody>
+    </table>
+
 </div>
-<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js"></script>
+<!--我的备忘录-->
+<div class="myMemo">
+	<form ng-submit="todoAdd()">
+	    <input type="text" ng-model="todoInput" size="50" placeholder="新增">
+	    <input type="submit" value="新增">
+	</form>
+	<div ng-repeat="x in todoList">
+	    <input type="checkbox" ng-model="x.done"> <span ng-bind="x.todoText"></span>
+	</div>
+	
+	<p><button ng-click="remove()">删除记录</button></p>
+</div>
+<!--/我的备忘录-->
 <script>
 var app = angular.module('myApp',[]);
-app.controller('myCtrl',function($scope){
-	$scope.firstName= "John";
-    $scope.lastName= "Doe";
+app.controller('userCtrl',function($scope){
+//	我的备忘录
+	$scope.todoList = JSON.parse( window.localStorage.getItem('STORAGE_KEY') || '[]' );
+
+	$scope.todoAdd = function(){
+		$scope.todoList.push({todoText:$scope.todoInput, down:false})
+		$scope.todoInput = '';
+		$scope.save(JSON.stringify($scope.todoList));
+	}
+	$scope.remove = function(){
+		var oldList = $scope.todoList;
+        $scope.todoList = [];
+        angular.forEach(oldList, function(x) {
+            if (!x.done) $scope.todoList.push(x);
+        });
+	}
+	$scope.fetch = function(){
+		return JSON.parse( window.localStorage.getItem('STORAGE_KEY') || '[]' )
+	}
+	$scope.save = function(todoList){
+		window.localStorage.setItem('STORAGE_KEY', todoList )
+		console.log( window.localStorage.getItem('STORAGE_KEY') )
+	}
+//	我的备忘录
+
+
+	$scope.users = [
+		{id:1, fName:'Hege', lName:"Pege" },
+		{id:2, fName:'Kim',  lName:"Pim" },
+		{id:3, fName:'Sal',  lName:"Smith" },
+		{id:4, fName:'Jack', lName:"Jones" },
+		{id:5, fName:'John', lName:"Doe" },
+		{id:6, fName:'Peter',lName:"Pan" }
+	];
+	/*$http.get('./data/sites.php').success(function(response){
+		$scope.names = response.sites
+	})*/
 })
 </script>
 </body>
